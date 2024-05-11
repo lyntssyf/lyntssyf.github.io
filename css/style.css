@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "Diamond-Bridge";
+  src: url("https://lyntssyf.github.io/fonts/Diamond-Bridge.ttf") format('ttf');
+}
+* {
+  font-family: Diamond-Bridge;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --putih: #ffffff;
+  --abu: #f5f7f8;
+  --abu-muda: #efefef;
+  --abu-gelap: #818182;
+  --hitam: #000000;
+  --hitam-muda: #555555;
+  --garis: #dddddd;
+  --utama: #b8950d;
+  --kedua: #45390f;
+  --ketiga: #e4dacd;
+}
+html {
+  word-break: break-word;
+}
+a:link, a:visited, a:active {
+  text-decoration: none;
+  outline: none;
+  color: var(--utama);
+}
+img {
+  width: 100%;
+}
+svg {
+  max-width: 100%;
+}
+.k {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-around;
+  max-width: 300px;
+  margin: 0 auto;
+  min-height: 100vh;
+  text-align: center;
+}
