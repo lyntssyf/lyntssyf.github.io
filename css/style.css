@@ -223,14 +223,15 @@ svg {
 }
 .ilp32 a {
   color: var(--kedua);
+  font-size: 14px;
   font-weight: 600;
 }
 .ilp32 svg {
   fill: var(--kedua);
-  width: 20px;
-  height: 20px;
-  vertical-align: -4px;
-  margin-right: 6px;
+  width: 16px;
+  height: 16px;
+  vertical-align: -2.4px;
+  margin-right: 5px;
 }
 .ilp33 {
   color: var(--utama);
