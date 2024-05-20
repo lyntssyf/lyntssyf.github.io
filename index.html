@@ -48,8 +48,8 @@
 
 		<div class="lp2">
 			<div>
-				<p class="ilp21">“Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda bagi kaum yang berfikir."</p>
-				<p>- QS. Ar-Rum: 21 -</p>
+				<p class="ilp21">“Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."</p>
+				<p>- QS. Ar-Rum 21 -</p>
 			</div>
 		</div>
 
@@ -136,6 +136,19 @@
 			<p>Atas kehadiran dan doa restunya, kami mengucapkan terima kasih.</p>
 		</div>
 
+		<div class="lp10">
+			<p class="ilp101">Kesan & Pesan</p>
+			<input id="namaKehadiran" type="text" placeholder="Nama *" required>
+			<textarea id="pesanKehadiran" rows="4" placeholder="Pesan *"></textarea>
+			<div class="ilp102">
+				<div id="tombolKirimKehadiran" class="tpembukaan">Kirim</div>
+			</div>
+		</div>
+
+		<div class="lp11">
+			<div id="listKehadiran" class="ilp111"></div>
+		</div>
+
 		<div class="lp9">- Syifa &Adil -</div>
 
 		<div>
@@ -186,6 +199,11 @@
 		pembukaan = document.getElementById('pembukaan');
 		musik = document.getElementById('musik');
 		nama = document.getElementById('nama');
+		namaKehadiran = document.getElementById('namaKehadiran');
+		pesanKehadiran = document.getElementById('pesanKehadiran');
+		tombolKirimKehadiran = document.getElementById('tombolKirimKehadiran');
+		listKehadiran = document.getElementById('listKehadiran');
+		let timeoutKirimKehadiran = null;
 		parts = window.location.search.substr(1).split("&");
 		get = {};
 
@@ -205,6 +223,7 @@
 
 				nama.innerHTML='<span class="pmb5">'+dataNama.trim()+'</span>';
 				nama.className='pmb4';
+				namaKehadiran.value=dataNama.trim();
 			}
 		}
 
@@ -219,6 +238,84 @@
 			window.scrollTo({
 				top: 0
 			});
+		}
+
+		tombolKirimKehadiran.onclick=function() {
+			kirimKehadiran();
+		}
+
+		setTimeout(getKehadiran());
+
+		function getKehadiran() {
+			fetch('https://sheets.googleapis.com/v4/spreadsheets/1jH0bmR-JMfWZHY7dD-kR_ap4j5emAn5evtdWdL5hkKA/values/Sheet1!B:C?majorDimension=ROWS&key=AIzaSyBPG3-IgZBxTcJlsxReR1jbYQ4uoUCGutQ')
+			.then(response => response.json())
+			.then((data) => {
+				listKehadiran.innerHTML='';
+
+				if (data.values) {
+					dataSheet = data.values;
+
+					if (dataSheet) {
+						dataSheet = dataSheet.reverse();
+						dataSheet.forEach((item)=>{
+							if (item[0] !== 'nama' && item[1] !== 'pesan') {
+								itemNama = item[0].toLowerCase().replace(/\b[a-z]/g, function(letter) {
+									return letter.toUpperCase();
+								});
+								
+								listKehadiran.innerHTML+='<div class="ilp112">'+textAsli(itemNama)+'</div><div class="ilp113">'+textAsli(item[1])+'</div>';
+							}
+						});
+					}
+				}
+			});
+		}
+
+		function kirimKehadiran() {
+			waktu = new Date();
+			tanggal = waktu.getFullYear()+"-"+waktu.getMonth()+"-"+waktu.getDate()+" "+waktu.getHours()+":"+waktu.getMinutes()+":"+waktu.getSeconds();
+
+			vNamaKehadiran = namaKehadiran.value.trim();
+			vPesanKehadiran = pesanKehadiran.value.trim();
+
+			namaKehadiran.value="";
+			pesanKehadiran.value="";
+			tombolKirimKehadiran.innerHTML="Mengirim..";
+
+			clearTimeout(timeoutKirimKehadiran);
+			timeoutKirimKehadiran = setTimeout(function() {
+				if (vNamaKehadiran && vPesanKehadiran) {
+					var keyValuePairs = [];
+					keyValuePairs.push("tanggal="+tanggal);
+					keyValuePairs.push("nama="+vNamaKehadiran);
+					keyValuePairs.push("pesan="+vPesanKehadiran);
+
+					var formDataKehadiran = keyValuePairs.join("&");
+
+					fetch("https://script.google.com/macros/s/AKfycbweDEJ2Gnxv1glPk2csIwgKJ6JdYqLTKGOBZyD-pnOAJ4oqWxNbA239ey2dBwvRDZE/exec", {
+						headers: {
+							"Content-Type": "text/plain;charset=utf-8",
+						},
+						redirect: "follow",
+						method: "POST",
+						body: formDataKehadiran
+					})
+					.then(response => getKehadiran());
+				}
+
+				tombolKirimKehadiran.innerHTML="Kirim";
+			}, 1200);
+		}
+
+		function textAsli(text='') {
+			var map = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			};
+			return text.trim().replace(/[&<>"']/g, function(m) { return map[m]; });
 		}
 
 		sampe=new Date('2024-06-20 08:00:00').getTime();x=setInterval(function(){sakiki=new Date().getTime();jrk=sampe-sakiki;dino=Math.floor(jrk/(1000*60*60*24));j=Math.floor((jrk%(1000*60*60*24))/(1000*60*60));m=Math.floor((jrk%(1000*60*60))/(1000*60));d=Math.floor((jrk%(1000*60))/1000);if(j<10){j="0"+j;}if(m<10){m="0"+m;}if(d<10){d="0"+d;}document.getElementById("waktu").innerHTML="<span><div>"+dino+"</div><div>Hari</div></span><span><div>"+j+"</div><div>Jam</div></span><span><div>"+m+"</div><div>Menit</div></span><span><div>"+d+"</div><div>Detik</div></span>";if(jrk<0){clearInterval(x);document.getElementById("waktu").innerHTML="Acara Telah Berlangsung"}},1000);
