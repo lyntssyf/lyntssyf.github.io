@@ -359,6 +359,10 @@ input[type=text], textarea {
   text-align: center;
 }
 .ilp102 {
+  font-size: 14px;
+  text-align: center;
+}
+.ilp103 {
   text-align: right;
 }
 .lp11 {
@@ -385,6 +389,7 @@ input[type=text], textarea {
 }
 .ilp113 {
   border-bottom: 1px dashed var(--hitam-muda);
+  font-size: 14px;
   font-style: italic;
   margin-bottom: 15px;
   padding-bottom: 15px;
