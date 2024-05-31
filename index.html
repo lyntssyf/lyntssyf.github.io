@@ -204,6 +204,9 @@
 		pesanKehadiran = document.getElementById('pesanKehadiran');
 		tombolKirimKehadiran = document.getElementById('tombolKirimKehadiran');
 		listKehadiran = document.getElementById('listKehadiran');
+		apiUrl = 'https://upercreative.000webhostapp.com/api/';
+		apiI = '39b8addcd4cc7653bd';
+		apiT = 'Y1qE7gzrGt6ZfXWZrT95PHzmd_P1kEEP1hDTYgFze5FnUDPZ-bcu52ZGAcUg8r9HKe_9gb7PjYvsMtlEusIzj-sek6N-X1yye55D';
 		let timeoutKirimKehadiran = null;
 		parts = window.location.search.substr(1).split("&");
 		get = {};
@@ -248,23 +251,23 @@
 		setTimeout(getKehadiran());
 
 		function getKehadiran() {
-			fetch('https://sheets.googleapis.com/v4/spreadsheets/1jH0bmR-JMfWZHY7dD-kR_ap4j5emAn5evtdWdL5hkKA/values/Sheet1!B:C?majorDimension=ROWS&key=AIzaSyBPG3-IgZBxTcJlsxReR1jbYQ4uoUCGutQ')
+			fetch(apiUrl+'?v=get&i='+apiI+'&t='+apiT+'')
 			.then(response => response.json())
 			.then((data) => {
 				listKehadiran.innerHTML='';
 
-				if (data.values) {
-					dataSheet = data.values;
+				if (data.status == 'sukses') {
+					dataJson = data.data;
 
-					if (dataSheet) {
-						dataSheet = dataSheet.reverse();
-						dataSheet.forEach((item)=>{
-							if (item[0] !== 'nama' && item[1] !== 'pesan') {
-								itemNama = item[0].toLowerCase().replace(/\b[a-z]/g, function(letter) {
+					if (dataJson) {
+						dataJson = dataJson.reverse();
+						dataJson.forEach((item)=>{
+							if (item['nama'] && item['ucapan']) {
+								itemNama = item['nama'].toLowerCase().replace(/\b[a-z]/g, function(letter) {
 									return letter.toUpperCase();
 								});
-								
-								listKehadiran.innerHTML+='<div class="ilp112">'+textAsli(itemNama)+'</div><div class="ilp113">'+textAsli(item[1])+'</div>';
+
+								listKehadiran.innerHTML+='<div class="ilp112">'+textAsli(itemNama)+'</div><div class="ilp113">'+textAsli(item['ucapan'])+'</div>';
 							}
 						});
 					}
@@ -286,22 +289,20 @@
 			clearTimeout(timeoutKirimKehadiran);
 			timeoutKirimKehadiran = setTimeout(function() {
 				if (vNamaKehadiran && vPesanKehadiran) {
-					var keyValuePairs = [];
-					keyValuePairs.push("tanggal="+tanggal);
-					keyValuePairs.push("nama="+vNamaKehadiran);
-					keyValuePairs.push("pesan="+vPesanKehadiran);
+					(async () => {
+						var arValue = [];
+						arValue.push("nama="+encodeURI(vNamaKehadiran));
+						arValue.push("ucapan="+encodeURI(vPesanKehadiran));
 
-					var formDataKehadiran = keyValuePairs.join("&");
+						var formDataKehadiran = arValue.join("&");
 
-					fetch("https://script.google.com/macros/s/AKfycbweDEJ2Gnxv1glPk2csIwgKJ6JdYqLTKGOBZyD-pnOAJ4oqWxNbA239ey2dBwvRDZE/exec", {
-						headers: {
-							"Content-Type": "text/plain;charset=utf-8",
-						},
-						redirect: "follow",
-						method: "POST",
-						body: formDataKehadiran
-					})
-					.then(response => getKehadiran());
+						const response = await fetch(apiUrl+'?i='+apiI+'&t='+apiT+'&'+formDataKehadiran);
+						const jsonResponse = await response.json();
+
+						if (jsonResponse.status == 'sukses') {
+							getKehadiran();
+						}
+					})();
 				}
 
 				tombolKirimKehadiran.innerHTML="Kirim";
