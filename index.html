@@ -100,7 +100,7 @@
 				<div class="lp6">
 					<p class="ilp61">Akad Nikah</p>
 					<p class="ilp63">Kamis, 20 Juni 2024</p>
-					<p class="ilp64">Pukul 08.00 WIB</p>
+					<p class="ilp64">Pukul 07.00 WIB</p>
 					<p class="ilp65">Musholla Al-Huda Jadid</p>
 				</div>
 			</div>
@@ -320,7 +320,7 @@
 			return text.trim().replace(/[&<>"']/g, function(m) { return map[m]; });
 		}
 
-		sampe=new Date('2024-06-20 08:00:00').getTime();x=setInterval(function(){sakiki=new Date().getTime();jrk=sampe-sakiki;dino=Math.floor(jrk/(1000*60*60*24));j=Math.floor((jrk%(1000*60*60*24))/(1000*60*60));m=Math.floor((jrk%(1000*60*60))/(1000*60));d=Math.floor((jrk%(1000*60))/1000);if(j<10){j="0"+j;}if(m<10){m="0"+m;}if(d<10){d="0"+d;}document.getElementById("waktu").innerHTML="<span><div>"+dino+"</div><div>Hari</div></span><span><div>"+j+"</div><div>Jam</div></span><span><div>"+m+"</div><div>Menit</div></span><span><div>"+d+"</div><div>Detik</div></span>";if(jrk<0){clearInterval(x);document.getElementById("waktu").innerHTML="Acara Telah Berlangsung"}},1000);
+		sampe=new Date('2024-06-20 07:00:00').getTime();x=setInterval(function(){sakiki=new Date().getTime();jrk=sampe-sakiki;dino=Math.floor(jrk/(1000*60*60*24));j=Math.floor((jrk%(1000*60*60*24))/(1000*60*60));m=Math.floor((jrk%(1000*60*60))/(1000*60));d=Math.floor((jrk%(1000*60))/1000);if(j<10){j="0"+j;}if(m<10){m="0"+m;}if(d<10){d="0"+d;}document.getElementById("waktu").innerHTML="<span><div>"+dino+"</div><div>Hari</div></span><span><div>"+j+"</div><div>Jam</div></span><span><div>"+m+"</div><div>Menit</div></span><span><div>"+d+"</div><div>Detik</div></span>";if(jrk<0){clearInterval(x);document.getElementById("waktu").innerHTML="Acara Telah Berlangsung"}},1000);
 	</script>
 </body>
 </html>
