@@ -144,6 +144,7 @@
 			<div class="ilp103">
 				<div id="tombolKirimKehadiran" class="tpembukaan">Kirim</div>
 			</div>
+			<div id="notifKirim"></div>
 		</div>
 
 		<div class="lp11">
@@ -204,6 +205,7 @@
 		pesanKehadiran = document.getElementById('pesanKehadiran');
 		tombolKirimKehadiran = document.getElementById('tombolKirimKehadiran');
 		listKehadiran = document.getElementById('listKehadiran');
+		notifKirim = document.getElementById('notifKirim');
 		apiUrl = 'https://upercreative.000webhostapp.com/api/';
 		apiI = '39b8addcd4cc7653bd';
 		apiT = 'Y1qE7gzrGt6ZfXWZrT95PHzmd_P1kEEP1hDTYgFze5FnUDPZ-bcu52ZGAcUg8r9HKe_9gb7PjYvsMtlEusIzj-sek6N-X1yye55D';
@@ -302,8 +304,20 @@
 						if (jsonResponse.status == 'sukses') {
 							getKehadiran();
 						}
+
+						if (jsonResponse.pesan) {
+							window.scrollTo(0, notifKirim.offsetTop);
+							notifKirim.innerHTML=jsonResponse.pesan;
+						}
 					})();
+				} else {
+					window.scrollTo(0, namaKehadiran.offsetTop);
+					notifKirim.innerHTML='Nama dan harapan tidak boleh kosong';
 				}
+
+				setTimeout(()=>{
+					notifKirim.innerHTML='';
+				}, 5000);
 
 				tombolKirimKehadiran.innerHTML="Kirim";
 			}, 1200);
