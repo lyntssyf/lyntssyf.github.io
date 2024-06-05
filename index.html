@@ -173,6 +173,7 @@
 
 	<script src="https://lyntssyf.github.io/js/jq.js"></script>
 	<script src="https://lyntssyf.github.io/js/carousel.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script>
 		$(document).ready(function() {
 			var owl = $('.owl-carousel');
@@ -206,9 +207,11 @@
 		tombolKirimKehadiran = document.getElementById('tombolKirimKehadiran');
 		listKehadiran = document.getElementById('listKehadiran');
 		notifKirim = document.getElementById('notifKirim');
-		apiUrl = 'https://upercreative.000webhostapp.com/api/';
-		apiI = '39b8addcd4cc7653bd';
-		apiT = 'Y1qE7gzrGt6ZfXWZrT95PHzmd_P1kEEP1hDTYgFze5FnUDPZ-bcu52ZGAcUg8r9HKe_9gb7PjYvsMtlEusIzj-sek6N-X1yye55D';
+		idHadir = 'HD1859082164';
+		const sbUrl = 'https://bmscnawpcmlehsltvfel.supabase.co';
+		const sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtc2NuYXdwY21sZWhzbHR2ZmVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc1Njg0NTMsImV4cCI6MjAzMzE0NDQ1M30.NaczLVyS-COC8g8Zb7oJWPGHeNdOdJHpI3uRbnGbkh0';
+		const { createClient } = supabase;
+		const db = createClient(sbUrl, sbKey);
 		let timeoutKirimKehadiran = null;
 		parts = window.location.search.substr(1).split("&");
 		get = {};
@@ -250,31 +253,35 @@
 			kirimKehadiran();
 		}
 
-		setTimeout(getKehadiran());
+		getKehadiran();
 
-		function getKehadiran() {
-			fetch(apiUrl+'?v=get&i='+apiI+'&t='+apiT+'')
-			.then(response => response.json())
-			.then((data) => {
-				listKehadiran.innerHTML='';
+		async function getKehadiran() {
+			try {
+				const { data, error } = await db.from('hadir').select();
 
-				if (data.status == 'sukses') {
-					dataJson = data.data;
+				if (data) {
+					listKehadiran.innerHTML='';
 
-					if (dataJson) {
-						dataJson = dataJson.reverse();
-						dataJson.forEach((item)=>{
-							if (item['nama'] && item['ucapan']) {
-								itemNama = item['nama'].toLowerCase().replace(/\b[a-z]/g, function(letter) {
-									return letter.toUpperCase();
-								});
+					arData = [];
+					data.forEach((dataItem)=>{
+						arData.push({nama: dataItem["nama"], ucapan: dataItem["ucapan"]});
+					});
 
-								listKehadiran.innerHTML+='<div class="ilp112">'+textAsli(itemNama)+'</div><div class="ilp113">'+textAsli(item['ucapan'])+'</div>';
-							}
-						});
-					}
+					arData.reverse();
+
+					arData.forEach((item)=>{
+						if (item['nama'] && item['ucapan']) {
+							itemNama = item['nama'].toLowerCase().replace(/\b[a-z]/g, function(letter) {
+								return letter.toUpperCase();
+							});
+
+							listKehadiran.innerHTML+='<div class="ilp112">'+textAsli(itemNama)+'</div><div class="ilp113">'+textAsli(item['ucapan'])+'</div>';
+						}
+					});
 				}
-			});
+			} catch (error) {
+				console.error('Error:', error);
+			}
 		}
 
 		function kirimKehadiran() {
@@ -284,31 +291,25 @@
 			vNamaKehadiran = namaKehadiran.value.trim();
 			vPesanKehadiran = pesanKehadiran.value.trim();
 
-			namaKehadiran.value="";
-			pesanKehadiran.value="";
-			tombolKirimKehadiran.innerHTML="Mengirim..";
+			tombolKirimKehadiran.innerHTML='Mengirim..';
 
 			clearTimeout(timeoutKirimKehadiran);
 			timeoutKirimKehadiran = setTimeout(function() {
 				if (vNamaKehadiran && vPesanKehadiran) {
+					namaKehadiran.value='';
+					pesanKehadiran.value='';
+
 					(async () => {
-						var arValue = [];
-						arValue.push("nama="+encodeURI(vNamaKehadiran));
-						arValue.push("ucapan="+encodeURI(vPesanKehadiran));
+						const { error } = await db.from('hadir').insert({ id_hadir: idHadir, nama: vNamaKehadiran, ucapan: vPesanKehadiran, dari: window.location.href, tanggal: tanggal });
 
-						var formDataKehadiran = arValue.join("&");
-
-						const response = await fetch(apiUrl+'?i='+apiI+'&t='+apiT+'&'+formDataKehadiran);
-						const jsonResponse = await response.json();
-
-						if (jsonResponse.status == 'sukses') {
+						if (error) {
+							notifKirim.innerHTML='Gagal Terkirim';
+						} else {
 							getKehadiran();
+							notifKirim.innerHTML='Terkirim';
 						}
 
-						if (jsonResponse.pesan) {
-							window.scrollTo(0, notifKirim.offsetTop);
-							notifKirim.innerHTML=jsonResponse.pesan;
-						}
+						window.scrollTo(0, notifKirim.offsetTop);
 					})();
 				} else {
 					window.scrollTo(0, namaKehadiran.offsetTop);
