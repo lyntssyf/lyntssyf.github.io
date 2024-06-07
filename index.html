@@ -257,19 +257,12 @@
 
 		async function getKehadiran() {
 			try {
-				const { data, error } = await db.from('hadir').select();
+				const { data, error } = await db.from('hadir').select().order('id', { ascending: false });
 
 				if (data) {
 					listKehadiran.innerHTML='';
 
-					arData = [];
-					data.forEach((dataItem)=>{
-						arData.push({nama: dataItem["nama"], ucapan: dataItem["ucapan"]});
-					});
-
-					arData.reverse();
-
-					arData.forEach((item)=>{
+					data.forEach((item)=>{
 						if (item['nama'] && item['ucapan']) {
 							itemNama = item['nama'].toLowerCase().replace(/\b[a-z]/g, function(letter) {
 								return letter.toUpperCase();
