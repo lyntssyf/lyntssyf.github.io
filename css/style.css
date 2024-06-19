@@ -431,7 +431,7 @@ input[type=text], textarea {
   stroke: var(--putih);
   width: 16px;
   height: 16px;
-  vertical-align: -1px;
+  vertical-align: 2px;
 }
 .ilp124 {
   color: var(--putih);
